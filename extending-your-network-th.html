@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extending Your Network - สื่อการสอน Network Fundamentals</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Sarabun', sans-serif; background: linear-gradient(135deg, #0f1726 0%, #1a2540 100%); color: #e8eaf0; line-height: 1.8; min-height: 100vh; }
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+header { text-align:center; padding: 60px 20px; background: linear-gradient(135deg, #ff5722 0%, #ff8a65 100%); border-radius: 20px; margin-bottom: 40px; box-shadow: 0 20px 50px rgba(255,87,34,0.25); }
+header h1 { font-size: 2.8rem; color:#fff; margin-bottom: 10px; font-weight: 700; }
+header .subtitle { color:#fff3e0; font-size: 1.15rem; font-weight: 300; }
+header .badge { display:inline-block; background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; margin-bottom: 16px; font-size: 0.9rem; color:#fff; backdrop-filter: blur(10px); }
+nav.toc { background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; margin-bottom: 40px; }
+nav.toc h2 { color:#ff8a65; font-size: 1.3rem; margin-bottom: 16px; }
+nav.toc ol { list-style:none; counter-reset: item; }
+nav.toc ol li { counter-increment: item; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); }
+nav.toc ol li:last-child { border-bottom:none; }
+nav.toc ol li a { color:#e8eaf0; text-decoration:none; transition: color .2s; display:flex; align-items:center; gap:12px; }
+nav.toc ol li a:hover { color:#ff8a65; }
+nav.toc ol li a::before { content: counter(item); background:#ff5722; color:#fff; width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:700; flex-shrink:0; }
+section.task { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius:16px; padding: 36px; margin-bottom: 28px; border-left: 4px solid #ff5722; }
+section.task h2 { color:#ff8a65; font-size: 1.8rem; margin-bottom: 18px; display:flex; align-items:center; gap:14px; }
+section.task h2 .tag { background:#ff5722; color:#fff; padding:4px 14px; border-radius: 10px; font-size: .9rem; font-weight:600; }
+section.task h3 { color:#ffb499; font-size: 1.25rem; margin-top: 24px; margin-bottom: 12px; }
+section.task p { margin-bottom: 14px; color:#d0d4de; }
+section.task ul, section.task ol { margin: 10px 0 16px 28px; color:#d0d4de; }
+section.task li { margin-bottom: 8px; }
+section.task strong { color:#ffb499; }
+section.task code { background: rgba(255,138,101,0.15); color:#ff8a65; padding: 2px 8px; border-radius: 6px; font-family: 'Consolas', monospace; font-size: 0.95em; }
+.info-box { background: rgba(255,87,34,0.08); border:1px solid rgba(255,138,101,0.3); border-left: 4px solid #ff8a65; border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+.info-box h4 { color:#ff8a65; margin-bottom: 8px; }
+.warn-box { background: rgba(255,193,7,0.08); border:1px solid rgba(255,193,7,0.3); border-left: 4px solid #ffc107; border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+.warn-box h4 { color:#ffc107; margin-bottom: 8px; }
+.success-box { background: rgba(76,175,80,0.08); border:1px solid rgba(76,175,80,0.3); border-left: 4px solid #4caf50; border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+.success-box h4 { color:#81c784; margin-bottom: 8px; }
+table { width:100%; border-collapse: collapse; margin: 16px 0; background: rgba(0,0,0,0.2); border-radius: 12px; overflow:hidden; }
+table th { background: linear-gradient(135deg, #ff5722, #ff8a65); color:#fff; padding: 12px 16px; text-align:left; font-size: .95rem; }
+table td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); color:#d0d4de; }
+table tr:last-child td { border-bottom:none; }
+table tr:hover td { background: rgba(255,138,101,0.05); }
+.diagram { background: linear-gradient(135deg, rgba(255,87,34,0.05), rgba(255,138,101,0.05)); border: 2px dashed rgba(255,138,101,0.3); border-radius: 16px; padding: 32px; margin: 24px 0; text-align:center; }
+.diagram .row { display:flex; justify-content:center; align-items:center; gap: 24px; flex-wrap: wrap; margin: 12px 0; }
+.node { background: linear-gradient(135deg, #ff5722, #ff8a65); color:#fff; padding: 16px 24px; border-radius: 14px; font-weight:600; min-width: 140px; box-shadow: 0 8px 20px rgba(255,87,34,0.3); }
+.node.alt { background: linear-gradient(135deg, #5e35b1, #7e57c2); box-shadow: 0 8px 20px rgba(94,53,177,0.3); }
+.node.green { background: linear-gradient(135deg, #43a047, #66bb6a); box-shadow: 0 8px 20px rgba(67,160,71,0.3); }
+.node.blue { background: linear-gradient(135deg, #1e88e5, #42a5f5); box-shadow: 0 8px 20px rgba(30,136,229,0.3); }
+.arrow { font-size: 1.8rem; color:#ff8a65; }
+.caption { color:#a0a4b0; font-style: italic; font-size: 0.95rem; margin-top: 12px; }
+.summary { background: linear-gradient(135deg, rgba(255,87,34,0.15), rgba(255,138,101,0.1)); border: 1px solid rgba(255,138,101,0.4); border-radius: 16px; padding: 36px; margin-top: 40px; }
+.summary h2 { color:#ff8a65; font-size: 2rem; margin-bottom: 20px; }
+.checklist { list-style:none; margin: 12px 0; }
+.checklist li { padding: 8px 0; padding-left: 32px; position:relative; }
+.checklist li::before { content:'☑'; position:absolute; left:0; color:#81c784; font-size: 1.2rem; }
+.grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } header h1 { font-size: 2rem; } }
+footer { text-align:center; padding: 40px 20px; color:#888; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 40px; }
+.flow { display:flex; flex-direction: column; gap: 12px; align-items:center; margin: 20px 0; }
+.flow .step { display:flex; align-items:center; gap: 16px; background: rgba(255,255,255,0.04); padding: 14px 20px; border-radius: 12px; border-left: 4px solid #ff5722; width: 100%; max-width: 600px; }
+.flow .step .num { background:#ff5722; color:#fff; width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<header>
+  <span class="badge">Pre Security • Network Fundamentals</span>
+  <h1>Extending Your Network</h1>
+  <p class="subtitle">เจาะลึกเทคโนโลยีที่ใช้ขยายเครือข่ายออกสู่อินเทอร์เน็ต — Port Forwarding, Firewall, VPN, Router & Switch</p>
+</header>
+
+<nav class="toc">
+  <h2>📚 สารบัญเนื้อหา</h2>
+  <ol>
+    <li><a href="#t1">Introduction to Port Forwarding</a></li>
+    <li><a href="#t2">Firewalls 101</a></li>
+    <li><a href="#t3">Practical - Firewall</a></li>
+    <li><a href="#t4">VPN Basics</a></li>
+    <li><a href="#t5">LAN Networking Devices (Router & Switch)</a></li>
+    <li><a href="#t6">Practical - Network Simulator</a></li>
+    <li><a href="#summary">สรุปภาพรวมและการนำไปใช้</a></li>
+  </ol>
+</nav>
+
+<section class="task" id="t1">
+  <h2><span class="tag">Task 1</span> Introduction to Port Forwarding</h2>
+  <p><strong>Port Forwarding</strong> คือกลไกสำคัญที่ทำให้ Application หรือ Service ภายในเครือข่ายส่วนตัว สามารถ <em>"เปิดประตู"</em> ให้คนภายนอกอินเทอร์เน็ตเข้ามาเชื่อมต่อได้ ถ้าไม่มี Port Forwarding บริการอย่าง Web Server จะใช้งานได้แค่ภายในเครือข่ายเดียวกันเท่านั้น (intranet)</p>
+
+  <div class="info-box">
+    <h4>🏠 เปรียบเทียบให้เห็นภาพ</h4>
+    <p>คิดเหมือนบ้านหลังหนึ่งที่มีคนอาศัยอยู่ภายใน ถ้าคนนอกจะมาส่งของ ต้องมี <strong>เลขที่บ้าน (Public IP)</strong> และ <strong>ประตูที่เปิดไว้ (Forwarded Port)</strong> เพื่อให้ของไปถึงห้องที่ถูกต้องในบ้าน</p>
+  </div>
+
+  <h3>🌐 ตัวอย่างสถานการณ์</h3>
+  <p>สมมุติว่ามี Web Server รัน Port 80 ที่ IP <code>192.168.1.10</code> เครื่องอื่นภายในเครือข่ายเดียวกันเข้าได้ แต่คนจากอินเทอร์เน็ตเข้าไม่ได้ ถ้า Admin ตั้งค่า Port Forwarding ที่ Router เครือข่าย Network #2 จะเข้าผ่าน <strong>Public IP</strong> ของ Network #1 (เช่น <code>82.62.51.70</code>) ได้</p>
+
+  <div class="diagram">
+    <div class="row">
+      <div class="node alt">🌐 Internet<br>Network #2</div>
+      <div class="arrow">→</div>
+      <div class="node">🛡 Router<br>82.62.51.70:80</div>
+      <div class="arrow">→</div>
+      <div class="node green">🖥 Web Server<br>192.168.1.10:80</div>
+    </div>
+    <p class="caption">Router ทำ Port Forwarding ส่ง Request จากภายนอกไปเครื่องในเครือข่ายส่วนตัว</p>
+  </div>
+
+  <div class="warn-box">
+    <h4>⚠️ Port Forwarding ≠ Firewall</h4>
+    <p><strong>Port Forwarding</strong> = "เปิดประตู" บอกว่าทราฟฟิกจะเดินไปไหน — <strong>Firewall</strong> = "ยามเฝ้าประตู" ตัดสินใจว่าทราฟฟิกจะผ่านได้หรือไม่ แม้ Port เปิดอยู่ Firewall ก็ยังบล็อกได้</p>
+  </div>
+
+  <h3>🛠 อุปกรณ์ที่ใช้ตั้งค่า</h3>
+  <p>Port Forwarding ตั้งค่าได้ที่ <strong>Router</strong> ของเครือข่าย โดยเข้าหน้าจัดการของ Router แล้วระบุว่า Port ไหนจะส่งต่อไปยัง IP ภายในไหน</p>
+</section>
+
+<section class="task" id="t2">
+  <h2><span class="tag">Task 2</span> Firewalls 101</h2>
+  <p><strong>Firewall</strong> คือ "ด่านตรวจชายแดน" ของเครือข่าย ทำหน้าที่ตัดสินใจว่า <em>ทราฟฟิกใดจะเข้า/ออกได้บ้าง</em> ผู้ดูแลระบบสามารถสร้างกฎ (rule) เพื่ออนุญาตหรือปฏิเสธทราฟฟิกได้ตามเงื่อนไขต่าง ๆ</p>
+
+  <h3>🔎 Firewall ตรวจสอบอะไรบ้าง?</h3>
+  <ul>
+    <li><strong>Source</strong> — ทราฟฟิกมาจากเครือข่าย/IP ไหน?</li>
+    <li><strong>Destination</strong> — ทราฟฟิกจะไปเครือข่าย/IP ไหน?</li>
+    <li><strong>Port</strong> — มุ่งหน้าไปที่ Port ใด (เช่น 80, 22, 3389)?</li>
+    <li><strong>Protocol</strong> — เป็น TCP, UDP หรือทั้งคู่?</li>
+  </ul>
+  <p>กระบวนการตรวจนี้เรียกว่า <strong>Packet Inspection</strong></p>
+
+  <h3>📏 Firewall ทำงานที่ Layer ไหน?</h3>
+  <p>Firewall ทำงานครอบคลุม <strong>OSI Layer 3 และ Layer 4</strong> (Network + Transport) — จึงเข้าใจทั้ง IP Address และ Port/Protocol</p>
+
+  <h3>🏷 ประเภทของ Firewall</h3>
+  <table>
+    <thead><tr><th>ประเภท</th><th>หลักการทำงาน</th><th>ข้อดี / ข้อเสีย</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Stateful</strong></td>
+        <td>ดู "บริบทของการเชื่อมต่อทั้งหมด" ไม่ใช่แค่ Packet ทีละชิ้น เช่น ติดตาม TCP Handshake</td>
+        <td>ฉลาดกว่า ตรวจจับพฤติกรรมได้ แต่กิน Resource สูง<br>ถ้า host หนึ่งทำตัวไม่ดี → block ทั้งเครื่องเลย</td>
+      </tr>
+      <tr>
+        <td><strong>Stateless</strong></td>
+        <td>ดูเฉพาะ Packet เดี่ยว ๆ ตามกฎตายตัวที่ตั้งไว้</td>
+        <td>เร็ว ใช้ Resource น้อย แต่ "โง่" หน่อย<br>เหมาะรับทราฟฟิกปริมาณมาก เช่น ป้องกัน DDoS</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <h4>💡 Firewall มีหลายรูปแบบ</h4>
+    <p>มีตั้งแต่ <strong>Hardware</strong> ขนาดใหญ่ในองค์กร ไปจนถึง <strong>Software</strong> เช่น Snort หรือแม้แต่ Router ที่บ้านก็มี Firewall ในตัว</p>
+  </div>
+</section>
+
+<section class="task" id="t3">
+  <h2><span class="tag">Task 3</span> Practical — Firewall</h2>
+  <p>Task ฝึกปฏิบัติบน TryHackMe ให้ผู้เรียนลองตั้งกฎ Firewall เพื่ออนุญาต/บล็อกทราฟฟิกตามโจทย์ที่กำหนด</p>
+
+  <h3>🧠 หลักการคิดในการสร้าง Rule</h3>
+  <div class="flow">
+    <div class="step"><span class="num">1</span><div>ระบุ <strong>Source IP/Network</strong> ของทราฟฟิก</div></div>
+    <div class="step"><span class="num">2</span><div>ระบุ <strong>Destination IP/Network</strong> ปลายทาง</div></div>
+    <div class="step"><span class="num">3</span><div>เลือก <strong>Protocol</strong> (TCP/UDP/ICMP) และ <strong>Port</strong></div></div>
+    <div class="step"><span class="num">4</span><div>เลือก Action: <strong>ALLOW</strong> หรือ <strong>DENY</strong></div></div>
+    <div class="step"><span class="num">5</span><div>เรียงลำดับกฎให้ถูกต้อง — กฎอันแรกที่ match จะถูกใช้</div></div>
+  </div>
+
+  <div class="success-box">
+    <h4>🎯 จุดที่ต้องระวัง</h4>
+    <p>ใน Firewall ลำดับกฎสำคัญมาก — ถ้ามี "allow all" อยู่ก่อน rule บล็อก ทุกอย่างจะถูกอนุญาตหมดและกฎบล็อกจะไม่ทำงาน</p>
+  </div>
+</section>
+
+<section class="task" id="t4">
+  <h2><span class="tag">Task 4</span> VPN Basics</h2>
+  <p><strong>VPN (Virtual Private Network)</strong> คือเทคโนโลยีที่สร้าง <em>"อุโมงค์เข้ารหัส (Tunnel)"</em> บนอินเทอร์เน็ต ทำให้อุปกรณ์ที่อยู่คนละเครือข่ายสามารถสื่อสารกันได้ <strong>เสมือนอยู่ในเครือข่ายเดียวกัน</strong></p>
+
+  <div class="info-box">
+    <h4>🏢 ตัวอย่าง: เชื่อมออฟฟิศ 2 ที่</h4>
+    <p>บริษัทมีออฟฟิศ A (Network #1) และออฟฟิศ B (Network #2) คนละจังหวัด — สร้าง VPN ขึ้นมาเป็น Network #3 ทำให้อุปกรณ์ของทั้งสองที่คุยกันได้เหมือนนั่งทำงานอยู่ออฟฟิศเดียวกัน</p>
+  </div>
+
+  <div class="diagram">
+    <div class="row">
+      <div class="node green">🏢 Office #1<br>Network 1</div>
+      <div class="arrow">🔒</div>
+      <div class="node alt">🌍 Internet<br>(Encrypted Tunnel)</div>
+      <div class="arrow">🔒</div>
+      <div class="node green">🏢 Office #2<br>Network 2</div>
+    </div>
+    <p class="caption">VPN สร้าง Tunnel เข้ารหัสผ่านอินเทอร์เน็ต = Network #3 ที่ปลอดภัย</p>
+  </div>
+
+  <h3>✨ ประโยชน์ของ VPN</h3>
+  <table>
+    <thead><tr><th>ประโยชน์</th><th>รายละเอียด</th></tr></thead>
+    <tbody>
+      <tr><td><strong>เชื่อมเครือข่ายข้ามที่ตั้ง</strong></td><td>หลายออฟฟิศคนละประเทศ ก็ใช้ทรัพยากร เช่น Server ร่วมกันได้</td></tr>
+      <tr><td><strong>ความเป็นส่วนตัว (Privacy)</strong></td><td>เข้ารหัสข้อมูล ป้องกัน sniffing บน WiFi สาธารณะที่ไม่ปลอดภัย</td></tr>
+      <tr><td><strong>ความนิรนาม (Anonymity)</strong></td><td>นักข่าว/นักเคลื่อนไหวใช้ปกป้องตัวเองในประเทศที่จำกัดเสรีภาพ — แต่ปลอดภัยแค่ไหนขึ้นกับนโยบาย Log ของผู้ให้บริการ</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <h4>🎯 TryHackMe ใช้ VPN ทำอะไร?</h4>
+    <p>TryHackMe ใช้ VPN เชื่อมผู้เรียนเข้ากับ "เครื่องเป้าหมาย" ของแลป โดยไม่เปิดเครื่องเหล่านี้สู่อินเทอร์เน็ตตรง ๆ ทำให้ <strong>ปลอดภัยทั้งกับผู้เรียนและ TryHackMe เอง</strong> และ ISP ไม่เข้าใจผิดว่ากำลังโจมตีคนอื่น</p>
+  </div>
+
+  <h3>🔧 เทคโนโลยี VPN ที่ควรรู้จัก</h3>
+  <table>
+    <thead><tr><th>เทคโนโลยี</th><th>รายละเอียด</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>PPP</strong><br>(Point-to-Point Protocol)</td>
+        <td>ทำหน้าที่ <strong>Authentication + Encryption</strong> ของข้อมูล ใช้ Private Key + Public Certificate (คล้าย SSH) — แต่ <em>ออกจากเครือข่ายเองไม่ได้</em> (non-routable) ต้องอาศัย PPTP</td>
+      </tr>
+      <tr>
+        <td><strong>PPTP</strong><br>(Point-to-Point Tunneling)</td>
+        <td>พา PPP เดินทางข้ามเครือข่ายได้ ติดตั้งง่าย รองรับเกือบทุกอุปกรณ์ แต่ <strong>เข้ารหัสอ่อน</strong> เมื่อเทียบกับตัวอื่น</td>
+      </tr>
+      <tr>
+        <td><strong>IPSec</strong><br>(Internet Protocol Security)</td>
+        <td>เข้ารหัสบน IP Framework โดยตรง <strong>ปลอดภัยสูง</strong> รองรับหลายอุปกรณ์ — แต่ติดตั้งยากกว่า</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="task" id="t5">
+  <h2><span class="tag">Task 5</span> LAN Networking Devices — Router & Switch</h2>
+
+  <h3>🛜 Router คืออะไร?</h3>
+  <p><strong>Router</strong> ทำหน้าที่ <em>"เชื่อมเครือข่ายเข้าด้วยกัน"</em> และส่งข้อมูลข้ามเครือข่าย (Routing) ทำงานที่ <strong>OSI Layer 3</strong> มี UI (เว็บ/Console) สำหรับตั้งค่า เช่น Port Forwarding, Firewall</p>
+
+  <div class="info-box">
+    <h4>🗺 การเลือกเส้นทาง (Routing)</h4>
+    <p>เมื่อมีหลายเส้นทางไปยังปลายทางเดียวกัน Router จะใช้ Protocol เลือกเส้นที่ดีที่สุดโดยพิจารณา:</p>
+    <ul>
+      <li><strong>เส้นทางที่สั้นที่สุด</strong></li>
+      <li><strong>เส้นทางที่เชื่อถือได้มากที่สุด</strong></li>
+      <li><strong>สื่อกลางที่เร็วที่สุด</strong> (เช่น Fiber เร็วกว่า Copper)</li>
+    </ul>
+  </div>
+
+  <h3>🔌 Switch คืออะไร?</h3>
+  <p><strong>Switch</strong> เป็นอุปกรณ์ที่ให้หลายเครื่อง (3–63) เชื่อมต่อกันด้วยสาย Ethernet — ทำงานได้ทั้ง <strong>Layer 2</strong> และ <strong>Layer 3</strong> (แต่ Switch Layer 2 จะไม่สามารถทำงาน Layer 3 ได้)</p>
+
+  <table>
+    <thead><tr><th>ประเภท Switch</th><th>หน้าที่</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Layer 2 Switch</strong></td><td>ส่ง <strong>Frame</strong> ไปยังเครื่องปลายทางโดยอ้างอิง <strong>MAC Address</strong></td></tr>
+      <tr><td><strong>Layer 3 Switch</strong></td><td>ทำได้ทั้งส่ง Frame ตาม MAC <strong>และ Route Packet</strong> ด้วย IP Protocol — เหมือน Switch ผสม Router</td></tr>
+    </tbody>
+  </table>
+
+  <div class="diagram">
+    <div class="row">
+      <div class="node blue">PC<br>MAC: AA:01</div>
+      <div class="arrow">→</div>
+      <div class="node">🔀 Switch L2<br>(forward by MAC)</div>
+      <div class="arrow">→</div>
+      <div class="node blue">PC<br>MAC: BB:02</div>
+    </div>
+    <p class="caption">Switch Layer 2 ส่ง Frame ตาม MAC Address ของผู้รับ</p>
+  </div>
+
+  <h3>🧩 VLAN — Virtual LAN</h3>
+  <p><strong>VLAN</strong> คือเทคโนโลยีที่ <em>"แบ่งเครือข่ายเสมือน"</em> ใน Switch ตัวเดียวกัน เครื่องในแต่ละ VLAN จะถูกมองเป็นคนละเครือข่าย แม้จะต่อสายเข้ากับ Switch เครื่องเดียวกันก็ตาม</p>
+
+  <div class="info-box">
+    <h4>🏢 ตัวอย่างการใช้งาน VLAN</h4>
+    <p>แผนก <strong>Sales</strong> และ <strong>Accounting</strong> ต่อ Switch เดียวกัน — ออก Internet ได้ทั้งสองแผนก แต่ <strong>คุยกันข้ามแผนกไม่ได้</strong> เพราะอยู่คนละ VLAN เพิ่มความปลอดภัยและบริหารจัดการง่าย</p>
+  </div>
+</section>
+
+<section class="task" id="t6">
+  <h2><span class="tag">Task 6</span> Practical — Network Simulator</h2>
+  <p>Lab ออนไลน์ให้ลองออกแบบและจำลองการทำงานของเครือข่ายขนาดเล็ก ฝึกการเลือกอุปกรณ์ (Router, Switch, Firewall) และวางตำแหน่งให้ทราฟฟิกไหลถูกต้อง</p>
+
+  <h3>🎯 สิ่งที่ฝึกจาก Lab นี้</h3>
+  <ul>
+    <li>เข้าใจการทำ <strong>Port Forwarding</strong> ที่ Router</li>
+    <li>เห็นภาพ <strong>Firewall</strong> ทำงานคู่กับ Router</li>
+    <li>เข้าใจว่า Switch กับ Router ต่างกันอย่างไรในเชิงปฏิบัติ</li>
+    <li>มองภาพ <strong>End-to-End</strong> ของการส่งข้อมูลข้ามเครือข่าย</li>
+  </ul>
+
+  <div class="success-box">
+    <h4>💪 Tip ทำ Lab ให้ผ่าน</h4>
+    <p>วาด Network Diagram ออกมาก่อน → ระบุ IP/Port → คิดว่าทราฟฟิกต้องเดินผ่านอะไรบ้าง → ค่อยตั้งค่าทีละจุด</p>
+  </div>
+</section>
+
+<section class="summary" id="summary">
+  <h2>🎯 สรุปภาพรวมและการนำไปใช้</h2>
+
+  <h3>🧠 Key Takeaways</h3>
+  <ul class="checklist">
+    <li><strong>Port Forwarding</strong> = "เปิดประตู" จากภายนอกเข้ามาในเครือข่าย ตั้งค่าที่ Router</li>
+    <li><strong>Firewall</strong> = "ยามเฝ้าประตู" ตัดสินใจอนุญาต/บล็อก ตามกฎที่ตั้ง — มี Stateful (ฉลาด/ช้า) และ Stateless (เร็ว/โง่)</li>
+    <li><strong>VPN</strong> = อุโมงค์เข้ารหัส (Tunnel) เชื่อมเครือข่ายข้ามอินเทอร์เน็ต — PPP, PPTP, IPSec</li>
+    <li><strong>Router (L3)</strong> เชื่อมเครือข่ายและเลือกเส้นทาง — <strong>Switch (L2/L3)</strong> เชื่อมอุปกรณ์ในเครือข่ายเดียวกัน</li>
+    <li><strong>VLAN</strong> แบ่ง LAN เสมือน เพิ่ม Security แม้ใช้ Switch ตัวเดียว</li>
+  </ul>
+
+  <h3>🗺 Network Map ที่เข้าใจหลังเรียนจบ</h3>
+  <div class="diagram">
+    <div class="row">
+      <div class="node alt">🌍 Internet</div>
+      <div class="arrow">→</div>
+      <div class="node">🛡 Firewall<br>+ Router<br>(Port Forwarding)</div>
+      <div class="arrow">→</div>
+      <div class="node green">🔀 Switch<br>(VLAN)</div>
+      <div class="arrow">→</div>
+      <div class="node blue">💻 LAN<br>Devices</div>
+    </div>
+    <p class="caption">ภาพรวมเครือข่ายองค์กรขนาดเล็กที่ผ่าน Firewall/Router → Switch (VLAN) → Hosts</p>
+  </div>
+
+  <h3>🚀 นำไปต่อยอด</h3>
+  <div class="grid-2">
+    <div class="info-box">
+      <h4>💼 Cybersecurity</h4>
+      <ul>
+        <li>วิเคราะห์ Firewall Rule เพื่อหา Misconfiguration</li>
+        <li>ใช้ VPN เพื่อ Pentest อย่างปลอดภัย</li>
+        <li>ตรวจ VLAN hopping ในเครือข่ายเป้าหมาย</li>
+      </ul>
+    </div>
+    <div class="info-box">
+      <h4>👨‍💻 Network Admin</h4>
+      <ul>
+        <li>ออกแบบ Network Topology ที่ทั้งปลอดภัยและรองรับ Scale</li>
+        <li>ตั้ง Site-to-Site VPN เชื่อมหลายสาขา</li>
+        <li>ใช้ VLAN แยกแผนกตาม Security Policy</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>📝 Checklist ก่อนไปบทเรียนถัดไป</h3>
+  <ul class="checklist">
+    <li>อธิบายได้ว่า Port Forwarding ต่างจาก Firewall อย่างไร</li>
+    <li>บอกความต่างระหว่าง Stateful และ Stateless Firewall ได้</li>
+    <li>เข้าใจประโยชน์ของ VPN และเทคโนโลยี PPP / PPTP / IPSec</li>
+    <li>แยก Router (L3) กับ Switch (L2/L3) ได้</li>
+    <li>เข้าใจว่า VLAN ช่วยเรื่องความปลอดภัยอย่างไร</li>
+  </ul>
+</section>
+
+<footer>
+  <p>📘 สื่อการสอนนี้สรุปจากเนื้อหา TryHackMe Room: <strong>Extending Your Network</strong></p>
+  <p>จัดทำเพื่อการศึกษา • Network Fundamentals Series</p>
+</footer>
+</div>
+
+</body>
+</html>

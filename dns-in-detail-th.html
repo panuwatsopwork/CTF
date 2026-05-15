@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNS in Detail - สื่อการสอน Network Fundamentals</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Sarabun', sans-serif; background: linear-gradient(135deg, #0f1726 0%, #1a2540 100%); color: #e8eaf0; line-height: 1.8; min-height: 100vh; }
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+header { text-align:center; padding: 60px 20px; background: linear-gradient(135deg, #ff5722 0%, #ff8a65 100%); border-radius: 20px; margin-bottom: 40px; box-shadow: 0 20px 50px rgba(255,87,34,0.25); }
+header h1 { font-size: 2.8rem; color:#fff; margin-bottom: 10px; font-weight: 700; }
+header .subtitle { color:#fff3e0; font-size: 1.15rem; font-weight: 300; }
+header .badge { display:inline-block; background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; margin-bottom: 16px; font-size: 0.9rem; color:#fff; backdrop-filter: blur(10px); }
+nav.toc { background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; margin-bottom: 40px; }
+nav.toc h2 { color:#ff8a65; font-size: 1.3rem; margin-bottom: 16px; }
+nav.toc ol { list-style:none; counter-reset: item; }
+nav.toc ol li { counter-increment: item; padding: 10px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); }
+nav.toc ol li:last-child { border-bottom:none; }
+nav.toc ol li a { color:#e8eaf0; text-decoration:none; transition: color .2s; display:flex; align-items:center; gap:12px; }
+nav.toc ol li a:hover { color:#ff8a65; }
+nav.toc ol li a::before { content: counter(item); background:#ff5722; color:#fff; width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:700; flex-shrink:0; }
+section.task { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius:16px; padding: 36px; margin-bottom: 28px; border-left: 4px solid #ff5722; }
+section.task h2 { color:#ff8a65; font-size: 1.8rem; margin-bottom: 18px; display:flex; align-items:center; gap:14px; }
+section.task h2 .tag { background:#ff5722; color:#fff; padding:4px 14px; border-radius: 10px; font-size: .9rem; font-weight:600; }
+section.task h3 { color:#ffb499; font-size: 1.25rem; margin-top: 24px; margin-bottom: 12px; }
+section.task p { margin-bottom: 14px; color:#d0d4de; }
+section.task ul, section.task ol { margin: 10px 0 16px 28px; color:#d0d4de; }
+section.task li { margin-bottom: 8px; }
+section.task strong { color:#ffb499; }
+section.task code { background: rgba(255,138,101,0.15); color:#ff8a65; padding: 2px 8px; border-radius: 6px; font-family: 'Consolas', monospace; font-size: 0.95em; }
+.info-box { background: rgba(255,87,34,0.08); border:1px solid rgba(255,138,101,0.3); border-left: 4px solid #ff8a65; border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+.info-box h4 { color:#ff8a65; margin-bottom: 8px; }
+.warn-box { background: rgba(255,193,7,0.08); border:1px solid rgba(255,193,7,0.3); border-left: 4px solid #ffc107; border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+.warn-box h4 { color:#ffc107; margin-bottom: 8px; }
+.success-box { background: rgba(76,175,80,0.08); border:1px solid rgba(76,175,80,0.3); border-left: 4px solid #4caf50; border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+.success-box h4 { color:#81c784; margin-bottom: 8px; }
+table { width:100%; border-collapse: collapse; margin: 16px 0; background: rgba(0,0,0,0.2); border-radius: 12px; overflow:hidden; }
+table th { background: linear-gradient(135deg, #ff5722, #ff8a65); color:#fff; padding: 12px 16px; text-align:left; font-size: .95rem; }
+table td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); color:#d0d4de; }
+table tr:last-child td { border-bottom:none; }
+table tr:hover td { background: rgba(255,138,101,0.05); }
+.diagram { background: linear-gradient(135deg, rgba(255,87,34,0.05), rgba(255,138,101,0.05)); border: 2px dashed rgba(255,138,101,0.3); border-radius: 16px; padding: 32px; margin: 24px 0; text-align:center; }
+.diagram .row { display:flex; justify-content:center; align-items:center; gap: 24px; flex-wrap: wrap; margin: 12px 0; }
+.node { background: linear-gradient(135deg, #ff5722, #ff8a65); color:#fff; padding: 16px 24px; border-radius: 14px; font-weight:600; min-width: 140px; box-shadow: 0 8px 20px rgba(255,87,34,0.3); }
+.node.alt { background: linear-gradient(135deg, #5e35b1, #7e57c2); box-shadow: 0 8px 20px rgba(94,53,177,0.3); }
+.node.green { background: linear-gradient(135deg, #43a047, #66bb6a); box-shadow: 0 8px 20px rgba(67,160,71,0.3); }
+.node.blue { background: linear-gradient(135deg, #1e88e5, #42a5f5); box-shadow: 0 8px 20px rgba(30,136,229,0.3); }
+.arrow { font-size: 1.8rem; color:#ff8a65; }
+.caption { color:#a0a4b0; font-style: italic; font-size: 0.95rem; margin-top: 12px; }
+.summary { background: linear-gradient(135deg, rgba(255,87,34,0.15), rgba(255,138,101,0.1)); border: 1px solid rgba(255,138,101,0.4); border-radius: 16px; padding: 36px; margin-top: 40px; }
+.summary h2 { color:#ff8a65; font-size: 2rem; margin-bottom: 20px; }
+.checklist { list-style:none; margin: 12px 0; }
+.checklist li { padding: 8px 0; padding-left: 32px; position:relative; }
+.checklist li::before { content:'☑'; position:absolute; left:0; color:#81c784; font-size: 1.2rem; }
+.grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } header h1 { font-size: 2rem; } }
+footer { text-align:center; padding: 40px 20px; color:#888; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 40px; }
+.flow { display:flex; flex-direction: column; gap: 12px; align-items:center; margin: 20px 0; }
+.flow .step { display:flex; align-items:center; gap: 16px; background: rgba(255,255,255,0.04); padding: 14px 20px; border-radius: 12px; border-left: 4px solid #ff5722; width: 100%; max-width: 600px; }
+.flow .step .num { background:#ff5722; color:#fff; width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<header>
+  <span class="badge">Pre Security • How The Web Works</span>
+  <h1>DNS in Detail</h1>
+  <p class="subtitle">เจาะลึกระบบชื่อโดเมน — ตั้งแต่ลำดับชั้นโดเมน, Record Types ไปจนถึงเส้นทางการ Resolve ทั้งหมด</p>
+</header>
+
+<nav class="toc">
+  <h2>📚 สารบัญเนื้อหา</h2>
+  <ol>
+    <li><a href="#t1">What is DNS?</a></li>
+    <li><a href="#t2">Domain Hierarchy</a></li>
+    <li><a href="#t3">Record Types</a></li>
+    <li><a href="#t4">Making A Request — เส้นทางของ DNS Query</a></li>
+    <li><a href="#t5">Practical — ทดลอง Query DNS</a></li>
+    <li><a href="#summary">สรุปภาพรวมและการนำไปใช้</a></li>
+  </ol>
+</nav>
+
+<section class="task" id="t1">
+  <h2><span class="tag">Task 1</span> What is DNS?</h2>
+  <p><strong>DNS (Domain Name System)</strong> คือระบบที่แปลง <em>"ชื่อโดเมนที่คนจำง่าย"</em> (เช่น <code>tryhackme.com</code>) ให้กลายเป็น <em>"IP Address ที่เครื่องเข้าใจ"</em> (เช่น <code>104.26.10.229</code>)</p>
+
+  <div class="info-box">
+    <h4>🏠 เปรียบเทียบให้เห็นภาพ</h4>
+    <p>ทุกบ้านมี "เลขที่บ้าน" ที่ไม่ซ้ำกัน ไว้ส่งจดหมายให้ถึงปลายทาง — เครื่องคอมพิวเตอร์ก็เช่นกัน มี <strong>IP Address</strong> ของตัวเอง แต่การจำตัวเลข 4 ชุดมันยาก DNS เลยทำหน้าที่เหมือน <strong>"สมุดโทรศัพท์ของอินเทอร์เน็ต"</strong></p>
+  </div>
+
+  <div class="diagram">
+    <div class="row">
+      <div class="node blue">👤 ผู้ใช้<br>"tryhackme.com"</div>
+      <div class="arrow">❓</div>
+      <div class="node">📞 DNS<br>(สมุดโทรศัพท์)</div>
+      <div class="arrow">→</div>
+      <div class="node green">📍 IP<br>104.26.10.229</div>
+    </div>
+    <p class="caption">DNS แปลงชื่อโดเมน → IP Address เพื่อให้เครื่องเชื่อมต่อได้</p>
+  </div>
+
+  <h3>🎯 ทำไม DNS สำคัญ?</h3>
+  <ul>
+    <li>ไม่ต้องจำตัวเลข IP ที่ซับซ้อน</li>
+    <li>เว็บไซต์เปลี่ยน IP ได้โดยที่ผู้ใช้ไม่ต้องเปลี่ยน URL</li>
+    <li>รองรับการกระจายโหลด (Load Balancing) ผ่านหลาย IP ในชื่อเดียว</li>
+  </ul>
+</section>
+
+<section class="task" id="t2">
+  <h2><span class="tag">Task 2</span> Domain Hierarchy</h2>
+  <p>ชื่อโดเมนมีโครงสร้าง <strong>"จากขวาไปซ้าย"</strong> — แต่ละส่วนมีความหมายและอำนาจในการบริหารต่างกัน</p>
+
+  <div class="diagram">
+    <div class="row">
+      <div class="node blue">admin</div>
+      <span style="font-size:1.5rem">.</span>
+      <div class="node">tryhackme</div>
+      <span style="font-size:1.5rem">.</span>
+      <div class="node alt">com</div>
+    </div>
+    <p class="caption">Subdomain (admin) . Second-Level Domain (tryhackme) . TLD (com)</p>
+  </div>
+
+  <h3>🏷 TLD (Top-Level Domain)</h3>
+  <p>คือส่วน <strong>"ขวาสุด"</strong> ของชื่อโดเมน เช่น <code>.com</code>, <code>.org</code>, <code>.th</code> — แบ่งเป็น 2 แบบหลัก:</p>
+  <table>
+    <thead><tr><th>ประเภท TLD</th><th>ความหมาย</th><th>ตัวอย่าง</th></tr></thead>
+    <tbody>
+      <tr><td><strong>gTLD</strong><br>(Generic)</td><td>บอกวัตถุประสงค์ของโดเมน</td><td><code>.com</code> (commercial), <code>.org</code> (organisation), <code>.edu</code> (education), <code>.gov</code> (government)</td></tr>
+      <tr><td><strong>ccTLD</strong><br>(Country Code)</td><td>บอกประเทศที่จดทะเบียน</td><td><code>.ca</code> (Canada), <code>.co.uk</code> (UK), <code>.th</code> (Thailand)</td></tr>
+    </tbody>
+  </table>
+  <p>ปัจจุบันมี TLD ใหม่ ๆ เพิ่มเรื่อย ๆ เช่น <code>.online</code>, <code>.club</code>, <code>.website</code>, <code>.biz</code> รวมแล้ว <strong>มากกว่า 2,000 TLDs</strong></p>
+
+  <h3>🏠 Second-Level Domain</h3>
+  <p>คือส่วนที่อยู่ <strong>"ซ้ายของ TLD"</strong> เช่นใน <code>tryhackme.com</code> ส่วน <code>tryhackme</code> คือ Second-Level Domain</p>
+  <div class="info-box">
+    <h4>📏 กฎการตั้งชื่อ</h4>
+    <ul>
+      <li>ยาวได้ <strong>สูงสุด 63 ตัวอักษร</strong> (ไม่นับ TLD)</li>
+      <li>ใช้ได้แค่ <strong>a-z, 0-9 และเครื่องหมายขีดกลาง (-)</strong></li>
+      <li><strong>ห้าม</strong> ขึ้นต้น/ลงท้ายด้วยขีดกลาง</li>
+      <li><strong>ห้าม</strong> มีขีดกลางติดกัน 2 ตัว</li>
+    </ul>
+  </div>
+
+  <h3>🔖 Subdomain</h3>
+  <p>คือส่วนที่อยู่ <strong>"ซ้ายของ Second-Level Domain"</strong> คั่นด้วยจุด เช่น <code>admin.tryhackme.com</code> ส่วน <code>admin</code> คือ Subdomain</p>
+  <ul>
+    <li>กฎตั้งชื่อเหมือน Second-Level Domain (63 ตัวอักษร, a-z 0-9 และขีดกลาง)</li>
+    <li>ซ้อน Subdomain หลายชั้นได้ เช่น <code>jupiter.servers.tryhackme.com</code></li>
+    <li>ความยาวรวมทั้งชื่อโดเมน <strong>ห้ามเกิน 253 ตัวอักษร</strong></li>
+    <li>จำนวน Subdomain ไม่มีขีดจำกัด</li>
+  </ul>
+</section>
+
+<section class="task" id="t3">
+  <h2><span class="tag">Task 3</span> Record Types</h2>
+  <p>DNS ไม่ได้แค่ผูกชื่อกับ IP — มี <strong>Record Type</strong> หลายแบบเพื่อจัดการข้อมูลต่าง ๆ ของโดเมน</p>
+
+  <table>
+    <thead><tr><th>Record</th><th>หน้าที่</th><th>ตัวอย่าง</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>A Record</strong></td>
+        <td>ผูกชื่อโดเมนกับ <strong>IPv4 Address</strong></td>
+        <td><code>tryhackme.com → 104.26.10.229</code></td>
+      </tr>
+      <tr>
+        <td><strong>AAAA Record</strong></td>
+        <td>ผูกชื่อโดเมนกับ <strong>IPv6 Address</strong></td>
+        <td><code>tryhackme.com → 2606:4700:20::681a:be5</code></td>
+      </tr>
+      <tr>
+        <td><strong>CNAME Record</strong></td>
+        <td>ชี้ไปยัง "ชื่อโดเมนอื่น" (alias)</td>
+        <td><code>store.tryhackme.com → shops.shopify.com</code></td>
+      </tr>
+      <tr>
+        <td><strong>MX Record</strong></td>
+        <td>บอก Server ที่ใช้รับ-ส่ง <strong>Email</strong> ของโดเมน มี Priority Flag เพื่อระบุลำดับ Server หลัก/สำรอง</td>
+        <td><code>tryhackme.com MX → alt1.aspmx.l.google.com</code></td>
+      </tr>
+      <tr>
+        <td><strong>TXT Record</strong></td>
+        <td>เก็บข้อความได้อิสระ ใช้สำหรับ SPF, DMARC, ยืนยันความเป็นเจ้าของโดเมน ฯลฯ</td>
+        <td><code>"v=spf1 ip4:192.0.2.0/24 ~all"</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <h4>💡 ตัวอย่าง TXT Record การใช้งานจริง</h4>
+    <ul>
+      <li><code>_acme-challenge.example.com</code> — ยืนยันตัวตนตอนขอ SSL Certificate</li>
+      <li><code>v=spf1 ...</code> — บอกว่า Server ใดมีสิทธิ์ส่งอีเมลแทนโดเมน (กัน spam/spoof)</li>
+      <li><code>v=DMARC1; p=reject</code> — นโยบายจัดการอีเมลที่ไม่ผ่าน SPF/DKIM</li>
+      <li><code>MS=ms12345678</code> — Microsoft ใช้ยืนยันความเป็นเจ้าของโดเมน</li>
+    </ul>
+  </div>
+
+  <div class="success-box">
+    <h4>🎯 จุดที่ต้องจำ</h4>
+    <ul>
+      <li><strong>A</strong> = IPv4 / <strong>AAAA</strong> = IPv6 (4 ตัว A เพราะ IPv6 ยาวกว่า)</li>
+      <li><strong>CNAME</strong> = "นามแฝง" ชี้ไปชื่ออื่นก่อนค่อย resolve ต่อ</li>
+      <li><strong>MX</strong> = Mail eXchange — สำหรับอีเมล</li>
+      <li><strong>TXT</strong> = Text — ข้อความอะไรก็ได้</li>
+    </ul>
+  </div>
+</section>
+
+<section class="task" id="t4">
+  <h2><span class="tag">Task 4</span> Making A Request — เส้นทางของ DNS Query</h2>
+  <p>เมื่อพิมพ์ชื่อโดเมนในเบราว์เซอร์ จะเกิดการเดินทางหา IP อย่างไร? มาดูทีละขั้น</p>
+
+  <div class="flow">
+    <div class="step"><span class="num">1</span><div><strong>Local Cache</strong> — เครื่องเช็คแคชของตัวเองก่อนว่าเคยถามชื่อนี้ไหม ถ้ามี → ตอบเลย</div></div>
+    <div class="step"><span class="num">2</span><div><strong>Recursive DNS Server</strong> — ถ้าไม่มี ส่งคำถามไปยัง DNS ของ ISP (หรือ 8.8.8.8 / 1.1.1.1) ซึ่งก็มีแคชของตัวเอง</div></div>
+    <div class="step"><span class="num">3</span><div><strong>Root DNS Server</strong> — ถ้า Recursive ไม่รู้คำตอบ ไปถาม Root Server ที่เป็น "กระดูกสันหลัง" ของ DNS</div></div>
+    <div class="step"><span class="num">4</span><div><strong>TLD Server</strong> — Root ชี้ไปยัง TLD Server (เช่น Server ของ <code>.com</code>) ที่รู้ว่า Authoritative Server ของโดเมนนั้นอยู่ที่ไหน</div></div>
+    <div class="step"><span class="num">5</span><div><strong>Authoritative Nameserver</strong> — เจ้าของข้อมูลตัวจริง ตอบ Record ที่ต้องการ (เช่น A Record)</div></div>
+    <div class="step"><span class="num">6</span><div><strong>ส่งกลับ + Cache</strong> — คำตอบส่งกลับมาตามทาง พร้อมเก็บแคชตาม <strong>TTL</strong> เพื่อใช้ครั้งถัดไป</div></div>
+  </div>
+
+  <div class="diagram">
+    <div class="row">
+      <div class="node blue">💻 Client</div>
+      <div class="arrow">→</div>
+      <div class="node">🔍 Recursive<br>DNS (ISP)</div>
+      <div class="arrow">→</div>
+      <div class="node alt">🌳 Root<br>Server</div>
+    </div>
+    <div class="row">
+      <div class="node alt">📂 TLD<br>(.com)</div>
+      <div class="arrow">→</div>
+      <div class="node green">👑 Authoritative<br>Nameserver</div>
+      <div class="arrow">→</div>
+      <div class="node">📍 IP<br>Address</div>
+    </div>
+    <p class="caption">เส้นทางเต็มของ DNS Resolution: Client → Recursive → Root → TLD → Authoritative → IP</p>
+  </div>
+
+  <h3>⏱ TTL (Time To Live)</h3>
+  <p>TTL คือเวลาเป็น <strong>วินาที</strong> ที่บอกว่าควร Cache คำตอบนานเท่าไหร่ก่อนต้องไปถามใหม่ — ช่วยลดภาระเครือข่ายและทำให้เว็บโหลดเร็วขึ้น</p>
+
+  <div class="info-box">
+    <h4>📚 ศัพท์สำคัญที่ต้องจำ</h4>
+    <ul>
+      <li><strong>Recursive DNS Server</strong> = DNS ที่ ISP ให้มา หรือเลือกใช้เอง (เช่น Google 8.8.8.8, Cloudflare 1.1.1.1) ทำหน้าที่ "วิ่งตามหาคำตอบ" ให้</li>
+      <li><strong>Root DNS Server</strong> = กระดูกสันหลังของอินเทอร์เน็ต ชี้ไปยัง TLD Server ที่ถูกต้อง</li>
+      <li><strong>TLD Server</strong> = เก็บข้อมูลว่า Authoritative Server ของแต่ละโดเมนใต้ TLD อยู่ที่ไหน</li>
+      <li><strong>Authoritative / Nameserver</strong> = "เจ้าของข้อมูลตัวจริง" ของโดเมน ที่ใช้แก้ไข DNS Record</li>
+    </ul>
+  </div>
+
+  <div class="success-box">
+    <h4>💡 ตัวอย่าง: tryhackme.com</h4>
+    <p>Nameserver ของ <code>tryhackme.com</code> คือ <code>kip.ns.cloudflare.com</code> และ <code>uma.ns.cloudflare.com</code> — มีหลายตัวเพื่อ <strong>Backup</strong> หากตัวหลักล่ม</p>
+  </div>
+</section>
+
+<section class="task" id="t5">
+  <h2><span class="tag">Task 5</span> Practical — ทดลอง Query DNS</h2>
+  <p>Task นี้บน TryHackMe มีหน้าเว็บให้ลองสร้าง DNS Query แบบต่าง ๆ พร้อมแสดงผลลัพธ์และคำสั่งที่ใช้รันบนเครื่องของตัวเอง</p>
+
+  <h3>🧪 สิ่งที่ลองทำได้ใน Lab</h3>
+  <ul>
+    <li>Query <strong>CNAME</strong> ของ <code>shop.website.thm</code></li>
+    <li>อ่านค่า <strong>TXT</strong> ของ <code>website.thm</code></li>
+    <li>ดู <strong>Priority</strong> ของ MX Record</li>
+    <li>หา <strong>A Record</strong> (IPv4) ของ <code>www.website.thm</code></li>
+  </ul>
+
+  <div class="info-box">
+    <h4>🛠 คำสั่งที่ควรรู้จัก (บนเครื่องตัวเอง)</h4>
+    <ul>
+      <li><code>nslookup tryhackme.com</code> — query แบบเร็ว ใช้ได้ทั้ง Windows/Linux/Mac</li>
+      <li><code>dig tryhackme.com</code> — เครื่องมือมาตรฐานของ Linux/Mac แสดงข้อมูลละเอียดมาก</li>
+      <li><code>dig MX tryhackme.com</code> — เจาะจง Record Type</li>
+      <li><code>dig @8.8.8.8 tryhackme.com</code> — เลือก DNS Server ที่จะถาม</li>
+    </ul>
+  </div>
+
+  <div class="success-box">
+    <h4>🎓 เป้าหมายของ Lab นี้</h4>
+    <p>ฝึก "อ่านผลลัพธ์ DNS" จริง ๆ เพื่อให้คุ้นเคยกับโครงสร้าง Record และเป็นพื้นฐานก่อนใช้เครื่องมืออย่าง <strong>Wireshark</strong>, <strong>Burp Suite</strong> หรือทำ <strong>DNS Recon</strong> ใน Pentest</p>
+  </div>
+</section>
+
+<section class="summary" id="summary">
+  <h2>🎯 สรุปภาพรวมและการนำไปใช้</h2>
+
+  <h3>🧠 Key Takeaways</h3>
+  <ul class="checklist">
+    <li><strong>DNS</strong> = แปลงชื่อโดเมน → IP Address (สมุดโทรศัพท์ของอินเทอร์เน็ต)</li>
+    <li>โครงสร้างโดเมน: <strong>Subdomain . Second-Level Domain . TLD</strong> — อ่านจากขวาไปซ้าย</li>
+    <li>Subdomain ยาวได้ 63 ตัวอักษร / โดเมนรวมไม่เกิน 253 ตัวอักษร</li>
+    <li>Record หลัก: <strong>A (IPv4), AAAA (IPv6), CNAME (alias), MX (mail), TXT (text)</strong></li>
+    <li>การ Resolve: <strong>Client → Recursive → Root → TLD → Authoritative → Answer</strong></li>
+    <li><strong>TTL</strong> = เวลา Cache เป็นวินาที ลดภาระและทำให้เว็บโหลดเร็ว</li>
+  </ul>
+
+  <h3>🗺 ภาพรวมทั้งระบบ</h3>
+  <div class="diagram">
+    <div class="row">
+      <div class="node blue">👤 User</div>
+      <div class="arrow">📝</div>
+      <div class="node">URL<br>www.example.com</div>
+    </div>
+    <div class="row">
+      <div class="node green">🔍 DNS<br>Resolution</div>
+      <div class="arrow">→</div>
+      <div class="node alt">📍 IP<br>93.184.216.34</div>
+      <div class="arrow">→</div>
+      <div class="node blue">🌐 Web<br>Server</div>
+    </div>
+    <p class="caption">DNS เป็น "ขั้นแรก" ของทุกการเชื่อมต่ออินเทอร์เน็ตที่ใช้ชื่อโดเมน</p>
+  </div>
+
+  <h3>🚀 นำไปต่อยอด</h3>
+  <div class="grid-2">
+    <div class="info-box">
+      <h4>🔐 Cybersecurity</h4>
+      <ul>
+        <li><strong>DNS Recon</strong> — รวบรวม Subdomain ของเป้าหมาย</li>
+        <li>วิเคราะห์ <strong>SPF / DMARC</strong> ใน TXT Record</li>
+        <li>ตรวจ <strong>DNS Hijacking / Cache Poisoning</strong></li>
+        <li>ใช้ <code>dig</code>, <code>dnsenum</code>, <code>amass</code> ในการสำรวจ</li>
+      </ul>
+    </div>
+    <div class="info-box">
+      <h4>👨‍💻 Web Developer / Sysadmin</h4>
+      <ul>
+        <li>ตั้งค่า A / CNAME ชี้โดเมนไป Server</li>
+        <li>ตั้ง MX Record สำหรับ Email Service</li>
+        <li>เพิ่ม TXT สำหรับ SPF / DKIM / DMARC</li>
+        <li>ปรับ TTL ก่อนย้าย Server เพื่อให้ Cache หมดเร็ว</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>📝 Checklist ก่อนไปบทเรียนถัดไป</h3>
+  <ul class="checklist">
+    <li>อธิบายได้ว่า DNS คืออะไรและทำไมจึงสำคัญ</li>
+    <li>แยกได้ระหว่าง TLD, Second-Level Domain และ Subdomain</li>
+    <li>จำ Record Types หลักได้: A, AAAA, CNAME, MX, TXT</li>
+    <li>เล่าเส้นทางของ DNS Query ตั้งแต่ Client → Authoritative ได้</li>
+    <li>เข้าใจบทบาทของ TTL กับการ Caching</li>
+  </ul>
+</section>
+
+<footer>
+  <p>📘 สื่อการสอนนี้สรุปจากเนื้อหา TryHackMe Room: <strong>DNS in Detail</strong></p>
+  <p>จัดทำเพื่อการศึกษา • Network Fundamentals Series</p>
+</footer>
+</div>
+
+</body>
+</html>

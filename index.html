@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Fundamentals - สารบัญบทเรียน CTF</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Sarabun', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(255, 87, 34, 0.18), transparent 34%),
+    radial-gradient(circle at bottom right, rgba(30, 136, 229, 0.16), transparent 32%),
+    linear-gradient(135deg, #0f1726 0%, #1a2540 100%);
+  color: #e8eaf0;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+.container { max-width: 1120px; margin: 0 auto; padding: 40px 24px; }
+header {
+  text-align: center;
+  padding: 68px 24px;
+  background: linear-gradient(135deg, #ff5722 0%, #ff8a65 100%);
+  border-radius: 24px;
+  margin-bottom: 36px;
+  box-shadow: 0 20px 50px rgba(255, 87, 34, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 42px 42px;
+  opacity: 0.16;
+}
+header > * { position: relative; z-index: 1; }
+.badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  color: #fff;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+}
+h1 { color: #fff; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.2; margin-bottom: 14px; font-weight: 700; }
+.subtitle { color: #fff3e0; font-size: 1.15rem; max-width: 780px; margin: 0 auto; font-weight: 300; }
+.intro {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  padding: 28px;
+  margin-bottom: 32px;
+}
+.intro h2, .lessons h2 { color: #ff8a65; font-size: 1.45rem; margin-bottom: 12px; }
+.intro p { color: #d0d4de; margin-bottom: 14px; }
+.path {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+.path-step {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px;
+  color: #d0d4de;
+}
+.path-step strong { color: #ffb499; display: block; margin-bottom: 4px; }
+.lessons { margin-bottom: 38px; }
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 18px;
+}
+.lesson-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-left: 4px solid #ff5722;
+  border-radius: 18px;
+  padding: 26px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+}
+.lesson-card:hover {
+  transform: translateY(-6px);
+  background: rgba(255, 87, 34, 0.08);
+  border-color: rgba(255, 138, 101, 0.55);
+}
+.lesson-card .number {
+  background: linear-gradient(135deg, #ff5722, #ff8a65);
+  color: #fff;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 20px rgba(255,87,34,0.3);
+}
+.lesson-card h3 { color: #ff8a65; font-size: 1.38rem; line-height: 1.35; margin-bottom: 10px; }
+.lesson-card p { color: #d0d4de; margin-bottom: 16px; }
+.topics { list-style: none; margin: 0 0 20px; color: #aeb5c3; }
+.topics li { padding: 6px 0 6px 24px; position: relative; border-bottom: 1px dashed rgba(255,255,255,0.07); }
+.topics li:last-child { border-bottom: none; }
+.topics li::before { content: "•"; position: absolute; left: 4px; color: #ff8a65; font-weight: 700; }
+.open-link {
+  margin-top: auto;
+  color: #fff;
+  background: rgba(255, 87, 34, 0.22);
+  border: 1px solid rgba(255, 138, 101, 0.38);
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-align: center;
+  font-weight: 600;
+}
+.note {
+  background: linear-gradient(135deg, rgba(76,175,80,0.12), rgba(76,175,80,0.04));
+  border: 1px solid rgba(76,175,80,0.28);
+  border-left: 4px solid #66bb6a;
+  border-radius: 16px;
+  padding: 22px 24px;
+  color: #d0d4de;
+}
+.note strong { color: #81c784; }
+footer {
+  text-align: center;
+  padding: 38px 20px;
+  color: #888;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  margin-top: 40px;
+}
+code {
+  background: rgba(0,0,0,0.35);
+  color: #ff8a65;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: 'Fira Code', Consolas, monospace;
+  font-size: 0.92em;
+}
+@media (max-width: 900px) {
+  .lesson-grid, .path { grid-template-columns: 1fr; }
+  header { padding: 52px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <span class="badge">Pre Security • Network Fundamentals</span>
+  <h1>สารบัญบทเรียน Network Fundamentals</h1>
+  <p class="subtitle">หน้าแรกสำหรับเลือกเรียน 3 บทเรียนหลักด้านเครือข่าย ตั้งแต่การส่งข้อมูลระดับ Packet/Frame ไปจนถึง DNS และการขยายเครือข่ายออกสู่อินเทอร์เน็ต</p>
+</header>
+
+<section class="intro">
+  <h2>เริ่มเรียนจากภาพรวมไปสู่การใช้งานจริง</h2>
+  <p>ชุดบทเรียนนี้ออกแบบให้ผู้เรียนค่อย ๆ เข้าใจการสื่อสารบนเครือข่ายจากพื้นฐานที่มองไม่เห็น ไปจนถึงบริการและอุปกรณ์ที่ใช้จริงในแลป CTF / TryHackMe</p>
+  <div class="path">
+    <div class="path-step"><strong>1. เข้าใจข้อมูลที่วิ่งในเครือข่าย</strong>Packet, Frame, TCP/UDP และ Port</div>
+    <div class="path-step"><strong>2. เข้าใจการค้นหาปลายทาง</strong>DNS, Record Types และการ Resolve ชื่อโดเมน</div>
+    <div class="path-step"><strong>3. เข้าใจการเชื่อมต่อเครือข่าย</strong>Port Forwarding, Firewall, VPN, Router และ Switch</div>
+  </div>
+</section>
+
+<main class="lessons">
+  <h2>เลือกบทเรียนที่ต้องการ</h2>
+  <div class="lesson-grid">
+    <a class="lesson-card" href="packets-and-frames-th.html">
+      <span class="number">1</span>
+      <h3>Packets &amp; Frames</h3>
+      <p>เข้าใจว่าข้อมูลถูกแบ่งเป็นชิ้นเล็ก ๆ และถูกส่งผ่านเครือข่ายอย่างไร</p>
+      <ul class="topics">
+        <li>Packets และ Frames</li>
+        <li>TCP/IP และ Three-Way Handshake</li>
+        <li>UDP/IP และ Ports 101</li>
+      </ul>
+      <span class="open-link">เปิดบทเรียน</span>
+    </a>
+
+    <a class="lesson-card" href="dns-in-detail-th.html">
+      <span class="number">2</span>
+      <h3>DNS in Detail</h3>
+      <p>เจาะลึกระบบชื่อโดเมน ตั้งแต่ลำดับชั้นโดเมนไปจนถึงเส้นทาง DNS Query</p>
+      <ul class="topics">
+        <li>Domain Hierarchy</li>
+        <li>A, AAAA, CNAME, MX, TXT</li>
+        <li>Making a DNS Request</li>
+      </ul>
+      <span class="open-link">เปิดบทเรียน</span>
+    </a>
+
+    <a class="lesson-card" href="extending-your-network-th.html">
+      <span class="number">3</span>
+      <h3>Extending Your Network</h3>
+      <p>เรียนรู้การขยายเครือข่ายและการควบคุมทราฟฟิกด้วยอุปกรณ์/เทคโนโลยีสำคัญ</p>
+      <ul class="topics">
+        <li>Port Forwarding และ Firewall</li>
+        <li>VPN Basics</li>
+        <li>Router, Switch และ Simulator</li>
+      </ul>
+      <span class="open-link">เปิดบทเรียน</span>
+    </a>
+  </div>
+</main>
+
+<section class="note">
+  <p><strong>หมายเหตุ:</strong> เมื่อเข้า <code>https://panuwatsopwork.github.io/CTF/</code> GitHub Pages จะโหลดไฟล์ <code>index.html</code> นี้เป็นหน้าแรกโดยอัตโนมัติ เพื่อใช้เป็นสารบัญสำหรับเปิดบทเรียนอื่น ๆ</p>
+</section>
+
+<footer>
+  <p>Network Fundamentals • CTF Learning Notes</p>
+</footer>
+</div>
+</body>
+</html>
