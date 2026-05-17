@@ -17,7 +17,50 @@ body {
   line-height: 1.8;
   min-height: 100vh;
 }
-.container { max-width: 1120px; margin: 0 auto; padding: 40px 24px; }
+.container { max-width: 1180px; margin: 0 auto; padding: 28px 24px 40px; }
+.top-nav {
+  position: sticky;
+  top: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background: rgba(15, 23, 38, 0.86);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  padding: 14px 18px;
+  margin-bottom: 26px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+  backdrop-filter: blur(12px);
+}
+.brand {
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.menu a {
+  color: #d0d4de;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  font-size: 0.94rem;
+}
+.menu a:hover {
+  color: #fff;
+  background: rgba(255, 87, 34, 0.16);
+  border-color: rgba(255, 138, 101, 0.34);
+}
 header {
   text-align: center;
   padding: 68px 24px;
@@ -51,14 +94,36 @@ header > * { position: relative; z-index: 1; }
 }
 h1 { color: #fff; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.2; margin-bottom: 14px; font-weight: 700; }
 .subtitle { color: #fff3e0; font-size: 1.15rem; max-width: 780px; margin: 0 auto; font-weight: 300; }
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+.hero-actions a {
+  color: #fff;
+  text-decoration: none;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.hero-actions a:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.26);
+}
 .intro {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 18px;
   padding: 28px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
-.intro h2, .lessons h2 { color: #ff8a65; font-size: 1.45rem; margin-bottom: 12px; }
+.intro h2, .lessons h2, .quick-links h2 { color: #ff8a65; font-size: 1.45rem; margin-bottom: 12px; }
 .intro p { color: #d0d4de; margin-bottom: 14px; }
 .path {
   display: grid;
@@ -74,7 +139,47 @@ h1 { color: #fff; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.2; margin-
   color: #d0d4de;
 }
 .path-step strong { color: #ffb499; display: block; margin-bottom: 4px; }
+.quick-links {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+.quick-grid a {
+  color: #e8eaf0;
+  text-decoration: none;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.quick-grid a:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 87, 34, 0.08);
+  border-color: rgba(255, 138, 101, 0.45);
+}
+.quick-grid strong { display: block; color: #ffb499; margin-bottom: 4px; }
+.quick-grid span { color: #aeb5c3; font-size: 0.94rem; }
 .lessons { margin-bottom: 38px; }
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.section-head p {
+  color: #aeb5c3;
+  max-width: 680px;
+}
 .lesson-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -129,6 +234,23 @@ h1 { color: #fff; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.2; margin-
   text-align: center;
   font-weight: 600;
 }
+.lesson-card.featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+}
+.lesson-card.featured .number { margin-bottom: 0; }
+.lesson-card.featured .topics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0 16px;
+  margin-bottom: 0;
+}
+.lesson-card.featured .open-link {
+  min-width: 150px;
+}
 .note {
   background: linear-gradient(135deg, rgba(76,175,80,0.12), rgba(76,175,80,0.04));
   border: 1px solid rgba(76,175,80,0.28);
@@ -154,31 +276,70 @@ code {
   font-size: 0.92em;
 }
 @media (max-width: 900px) {
-  .lesson-grid, .path { grid-template-columns: 1fr; }
+  .lesson-grid, .path, .quick-grid { grid-template-columns: 1fr; }
   header { padding: 52px 20px; }
+  .top-nav, .section-head { align-items: stretch; flex-direction: column; }
+  .menu { justify-content: flex-start; }
+  .lesson-card.featured {
+    display: flex;
+    align-items: stretch;
+  }
+  .lesson-card.featured .number { margin-bottom: 16px; }
+  .lesson-card.featured .topics { display: block; margin-bottom: 20px; }
 }
 </style>
 </head>
 <body>
 <div class="container">
+<nav class="top-nav" aria-label="เมนูหลัก">
+  <a class="brand" href="index.html">CTF Learning Hub</a>
+  <div class="menu">
+    <a href="#network-lessons">Network</a>
+    <a href="#ctf-collection">CTF Vol 1</a>
+    <a href="packets-and-frames-th.html">Packets</a>
+    <a href="dns-in-detail-th.html">DNS</a>
+    <a href="extending-your-network-th.html">Extending</a>
+    <a href="ctf-vol1.html">CTF Guide</a>
+  </div>
+</nav>
+
 <header>
   <span class="badge">Pre Security • Network Fundamentals</span>
-  <h1>สารบัญบทเรียน Network Fundamentals</h1>
-  <p class="subtitle">หน้าแรกสำหรับเลือกเรียน 3 บทเรียนหลักด้านเครือข่าย ตั้งแต่การส่งข้อมูลระดับ Packet/Frame ไปจนถึง DNS และการขยายเครือข่ายออกสู่อินเทอร์เน็ต</p>
+  <h1>สารบัญบทเรียน CTF</h1>
+  <p class="subtitle">หน้าแรกสำหรับเลือกเรียนบทเรียน Network Fundamentals และคู่มือ CTF Collection Vol 1 โดยใช้เป็น hub สำหรับเปิดทุกหน้าใน GitHub Pages</p>
+  <div class="hero-actions">
+    <a href="#network-lessons">เริ่ม Network Fundamentals</a>
+    <a href="ctf-vol1.html">เปิด CTF Collection Vol 1</a>
+  </div>
 </header>
 
 <section class="intro">
   <h2>เริ่มเรียนจากภาพรวมไปสู่การใช้งานจริง</h2>
-  <p>ชุดบทเรียนนี้ออกแบบให้ผู้เรียนค่อย ๆ เข้าใจการสื่อสารบนเครือข่ายจากพื้นฐานที่มองไม่เห็น ไปจนถึงบริการและอุปกรณ์ที่ใช้จริงในแลป CTF / TryHackMe</p>
+  <p>ชุดบทเรียนนี้ออกแบบให้ผู้เรียนค่อย ๆ เข้าใจการสื่อสารบนเครือข่ายจากพื้นฐานที่มองไม่เห็น ไปจนถึงบริการ อุปกรณ์ และเทคนิคที่ใช้จริงในแลป CTF / TryHackMe</p>
   <div class="path">
     <div class="path-step"><strong>1. เข้าใจข้อมูลที่วิ่งในเครือข่าย</strong>Packet, Frame, TCP/UDP และ Port</div>
     <div class="path-step"><strong>2. เข้าใจการค้นหาปลายทาง</strong>DNS, Record Types และการ Resolve ชื่อโดเมน</div>
-    <div class="path-step"><strong>3. เข้าใจการเชื่อมต่อเครือข่าย</strong>Port Forwarding, Firewall, VPN, Router และ Switch</div>
+    <div class="path-step"><strong>3. นำไปใช้กับ CTF</strong>Port Forwarding, Firewall, VPN, Tools, OSINT, Crypto, Forensics และ Web</div>
   </div>
 </section>
 
-<main class="lessons">
-  <h2>เลือกบทเรียนที่ต้องการ</h2>
+<section class="quick-links" aria-labelledby="quick-links-title">
+  <h2 id="quick-links-title">เมนูลัดไปยังทุกหน้า</h2>
+  <div class="quick-grid">
+    <a href="packets-and-frames-th.html"><strong>Packets &amp; Frames</strong><span>พื้นฐานการส่งข้อมูล</span></a>
+    <a href="dns-in-detail-th.html"><strong>DNS in Detail</strong><span>ระบบชื่อโดเมน</span></a>
+    <a href="extending-your-network-th.html"><strong>Extending Your Network</strong><span>ขยายและป้องกันเครือข่าย</span></a>
+    <a href="ctf-vol1.html"><strong>CTF Collection Vol 1</strong><span>โจทย์ CTF และเตรียมสอบ</span></a>
+  </div>
+</section>
+
+<main class="lessons" id="network-lessons">
+  <div class="section-head">
+    <div>
+      <h2>Network Fundamentals</h2>
+      <p>เรียนตามลำดับนี้เพื่อปูพื้นฐานเครือข่ายก่อนเข้าสู่โจทย์ CTF ที่ต้องอ่าน packet, เข้าใจ service และใช้ VPN/Firewall ในแลป</p>
+    </div>
+  </div>
   <div class="lesson-grid">
     <a class="lesson-card" href="packets-and-frames-th.html">
       <span class="number">1</span>
@@ -218,8 +379,33 @@ code {
   </div>
 </main>
 
+<section class="lessons" id="ctf-collection">
+  <div class="section-head">
+    <div>
+      <h2>CTF Collection และเตรียมสอบ</h2>
+      <p>คู่มือรวมแนวคิด เครื่องมือ และ walkthrough หลายหมวด เหมาะสำหรับทบทวนหลังเรียนพื้นฐาน Network แล้ว</p>
+    </div>
+  </div>
+  <div class="lesson-grid">
+    <a class="lesson-card featured" href="ctf-vol1.html">
+      <span class="number">4</span>
+      <div>
+        <h3>CTF Collection Vol 1</h3>
+        <p>สรุปแนวทางแก้โจทย์ CTF 20 ข้อ พร้อมหมวดเตรียมสอบ 8 ด้าน เช่น Web, Crypto, Forensics, Network, Reverse, Pwn, OSINT และ Programming</p>
+        <ul class="topics">
+          <li>Mindset และ Tools</li>
+          <li>Crypto / Stego / Forensics</li>
+          <li>Web / Network / OSINT</li>
+          <li>แนวทางเตรียมสอบ CTF</li>
+        </ul>
+      </div>
+      <span class="open-link">เปิดคู่มือ</span>
+    </a>
+  </div>
+</section>
+
 <section class="note">
-  <p><strong>หมายเหตุ:</strong> เมื่อเข้า <code>https://panuwatsopwork.github.io/CTF/</code> GitHub Pages จะโหลดไฟล์ <code>index.html</code> นี้เป็นหน้าแรกโดยอัตโนมัติ เพื่อใช้เป็นสารบัญสำหรับเปิดบทเรียนอื่น ๆ</p>
+  <p><strong>หมายเหตุ:</strong> เมื่อเข้า <code>https://panuwatsopwork.github.io/CTF/</code> GitHub Pages จะโหลดไฟล์ <code>index.html</code> นี้เป็นหน้าแรกโดยอัตโนมัติ ทุกลิงก์ในหน้านี้ใช้ path แบบ relative เพื่อให้เปิดไฟล์ HTML อื่น ๆ ได้ตรงบน GitHub Pages</p>
 </section>
 
 <footer>
