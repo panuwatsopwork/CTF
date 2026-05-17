@@ -37,6 +37,19 @@ body {
   text-decoration: none;
   white-space: nowrap;
 }
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 138, 101, 0.34);
+  background: rgba(255, 87, 34, 0.16);
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
 .menu {
   display: flex;
   align-items: center;
@@ -314,18 +327,22 @@ ul.bullet-list li { margin-bottom: 8px; }
 @media (max-width: 768px) {
   .container { padding: 18px 14px 32px; }
   .top-nav {
-    position: static;
-    flex-direction: column;
-    align-items: stretch;
+    top: 10px;
+    align-items: center;
+    flex-wrap: wrap;
     border-radius: 16px;
   }
+  .menu-toggle { display: inline-flex; margin-left: auto; }
   .menu {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
     justify-content: flex-start;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 2px;
+    padding-top: 10px;
   }
-  .menu a { white-space: nowrap; }
+  .top-nav.open .menu { display: flex; }
+  .menu a { text-align: left; }
   header { padding: 42px 18px; border-radius: 18px; }
   header h1 { font-size: 2rem; }
   section.task { padding: 22px 18px; border-radius: 16px; }
@@ -342,6 +359,7 @@ ul.bullet-list li { margin-bottom: 8px; }
 <div class="container">
 <nav class="top-nav" aria-label="เมนูหลัก">
   <a class="brand" href="index.html">CTF Learning Hub</a>
+  <button class="menu-toggle" type="button" aria-label="เปิดเมนู" aria-expanded="false">☰</button>
   <div class="menu">
     <a href="index.html">หน้าแรก</a>
     <a class="active" href="packets-and-frames-th.html">Packets</a>
@@ -869,5 +887,24 @@ ul.bullet-list li { margin-bottom: 8px; }
 <p>จัดทำเพื่อการศึกษา • Network Fundamentals Series</p>
 </footer>
 </div>
+<script>
+  const menuToggle = document.querySelector('.menu-toggle');
+  const topNav = document.querySelector('.top-nav');
+  if (menuToggle && topNav) {
+    menuToggle.addEventListener('click', () => {
+      const isOpen = topNav.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.textContent = isOpen ? '×' : '☰';
+    });
+
+    topNav.querySelectorAll('.menu a').forEach((link) => {
+      link.addEventListener('click', () => {
+        topNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.textContent = '☰';
+      });
+    });
+  }
+</script>
 </body>
 </html>

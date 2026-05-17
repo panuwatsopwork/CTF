@@ -51,7 +51,7 @@
   - กลุ่ม CTF Collection และเตรียมสอบ
   - Note สำหรับ GitHub Pages
 - ข้อสำคัญ: หน้าแรกใช้ relative links ทั้งหมด จึงเหมาะกับ GitHub Pages ที่ใช้ `index.html` เป็น entry point
-- Mobile: เมนูและ card layout ปรับลงจอเล็ก โดยเมนูเลื่อนแนวนอนได้เมื่อพื้นที่ไม่พอ
+- Mobile: เมนูหลักซ่อนอยู่หลัง hamburger button แบบ sticky เพื่อให้เปิดเมนูได้ระหว่าง scroll และ card layout ปรับลงจอเล็ก
 
 ### `packets-and-frames-th.html`
 
@@ -73,7 +73,7 @@
 - External dependency:
   - Google Fonts
   - ลิงก์อ้างอิง TryHackMe room
-- Mobile: เพิ่ม header menu ข้ามไฟล์, ลด padding, ปรับหัวข้อ, table และ diagram ให้เลื่อนแนวนอนได้เมื่อจอแคบ
+- Mobile: header menu ข้ามไฟล์ซ่อนอยู่หลัง hamburger button, ลด padding, ปรับหัวข้อ, table และ diagram ให้เลื่อนแนวนอนได้เมื่อจอแคบ
 
 ### `dns-in-detail-th.html`
 
@@ -93,7 +93,7 @@
   - มี table of contents, diagram, table, info box, warn box และ success box
 - External dependency:
   - Google Fonts
-- Mobile: เพิ่ม header menu ข้ามไฟล์, ปรับ task card, table, diagram และ flow step ให้ไม่ล้นจอ
+- Mobile: header menu ข้ามไฟล์ซ่อนอยู่หลัง hamburger button, ปรับ task card, table, diagram และ flow step ให้ไม่ล้นจอ
 
 ### `extending-your-network-th.html`
 
@@ -114,7 +114,7 @@
   - มี table of contents, diagram, flow step, table และกล่องคำอธิบาย
 - External dependency:
   - Google Fonts
-- Mobile: เพิ่ม header menu ข้ามไฟล์, ปรับ task card, table, diagram และ flow step ให้ไม่ล้นจอ
+- Mobile: header menu ข้ามไฟล์ซ่อนอยู่หลัง hamburger button, ปรับ task card, table, diagram และ flow step ให้ไม่ล้นจอ
 
 ### `ctf-vol1.html`
 
@@ -143,7 +143,7 @@
 - External dependency:
   - Google Fonts
   - ลิงก์เครื่องมือ CTF ภายนอก เช่น CyberChef, dCode, Aperi'Solve และแหล่งฝึกอื่น ๆ
-- Mobile: topbar มีเมนูข้ามไฟล์แบบเลื่อนแนวนอน, sidebar เป็น overlay ผ่านปุ่มลอย, code block/table เลื่อนแนวนอนได้ และ exam/example cards ถูกจัดเรียงเป็นแนวตั้งบนจอเล็ก
+- Mobile: topbar มี hamburger menu สำหรับข้ามไฟล์, sidebar เนื้อหาเป็น overlay ผ่านปุ่มลอย, code block/table เลื่อนแนวนอนได้ และ exam/example cards ถูกจัดเรียงเป็นแนวตั้งบนจอเล็ก
 
 ## GitHub Pages Checklist
 

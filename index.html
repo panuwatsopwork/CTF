@@ -40,6 +40,19 @@ body {
   text-decoration: none;
   white-space: nowrap;
 }
+.menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 138, 101, 0.34);
+  background: rgba(255, 87, 34, 0.16);
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
 .menu {
   display: flex;
   align-items: center;
@@ -278,9 +291,24 @@ code {
 @media (max-width: 900px) {
   .lesson-grid, .path, .quick-grid { grid-template-columns: 1fr; }
   header { padding: 52px 20px; }
-  .top-nav, .section-head { align-items: stretch; flex-direction: column; }
-  .menu { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
-  .menu a { white-space: nowrap; }
+  .top-nav {
+    top: 10px;
+    align-items: center;
+    border-radius: 16px;
+    flex-wrap: wrap;
+  }
+  .section-head { align-items: stretch; flex-direction: column; }
+  .menu-toggle { display: inline-flex; margin-left: auto; }
+  .menu {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding-top: 10px;
+  }
+  .top-nav.open .menu { display: flex; }
+  .menu a { text-align: left; }
   .lesson-card.featured {
     display: flex;
     align-items: stretch;
@@ -294,6 +322,7 @@ code {
 <div class="container">
 <nav class="top-nav" aria-label="เมนูหลัก">
   <a class="brand" href="index.html">CTF Learning Hub</a>
+  <button class="menu-toggle" type="button" aria-label="เปิดเมนู" aria-expanded="false">☰</button>
   <div class="menu">
     <a class="active" href="index.html">หน้าแรก</a>
     <a href="#network-lessons">Network</a>
@@ -414,5 +443,24 @@ code {
   <p>Network Fundamentals • CTF Learning Notes</p>
 </footer>
 </div>
+<script>
+  const menuToggle = document.querySelector('.menu-toggle');
+  const topNav = document.querySelector('.top-nav');
+  if (menuToggle && topNav) {
+    menuToggle.addEventListener('click', () => {
+      const isOpen = topNav.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.textContent = isOpen ? '×' : '☰';
+    });
+
+    topNav.querySelectorAll('.menu a').forEach((link) => {
+      link.addEventListener('click', () => {
+        topNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.textContent = '☰';
+      });
+    });
+  }
+</script>
 </body>
 </html>

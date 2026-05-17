@@ -11,6 +11,7 @@ body { font-family: 'Sarabun', sans-serif; background: linear-gradient(135deg, #
 .container { max-width: 1100px; margin: 0 auto; padding: 28px 24px 40px; }
 .top-nav { position: sticky; top: 16px; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:18px; background: rgba(15,23,38,0.88); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:14px 18px; margin-bottom:26px; box-shadow:0 18px 40px rgba(0,0,0,0.22); backdrop-filter: blur(12px); }
 .brand { color:#fff; font-weight:700; text-decoration:none; white-space:nowrap; }
+.menu-toggle { display:none; align-items:center; justify-content:center; width:42px; height:42px; border-radius:12px; border:1px solid rgba(255,138,101,0.34); background:rgba(255,87,34,0.16); color:#fff; font-size:1.25rem; cursor:pointer; }
 .menu { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:8px; }
 .menu a { color:#d0d4de; text-decoration:none; padding:8px 12px; border-radius:999px; border:1px solid transparent; transition: color .2s, background .2s, border-color .2s; font-size:.94rem; }
 .menu a:hover, .menu a.active { color:#fff; background: rgba(255,87,34,0.16); border-color: rgba(255,138,101,0.34); }
@@ -62,9 +63,11 @@ table tr:hover td { background: rgba(255,138,101,0.05); }
 .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
 @media (max-width: 768px) {
   .container { padding: 18px 14px 32px; }
-  .top-nav { position: static; flex-direction: column; align-items: stretch; border-radius: 16px; }
-  .menu { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
-  .menu a { white-space: nowrap; }
+  .top-nav { top:10px; align-items:center; flex-wrap:wrap; border-radius: 16px; }
+  .menu-toggle { display:inline-flex; margin-left:auto; }
+  .menu { display:none; width:100%; flex-direction:column; align-items:stretch; justify-content:flex-start; padding-top:10px; }
+  .top-nav.open .menu { display:flex; }
+  .menu a { text-align:left; }
   header { padding: 42px 18px; border-radius: 18px; }
   header h1 { font-size: 2rem; }
   nav.toc { padding: 20px 18px; }
@@ -87,6 +90,7 @@ footer { text-align:center; padding: 40px 20px; color:#888; border-top: 1px soli
 <div class="container">
 <nav class="top-nav" aria-label="เมนูหลัก">
   <a class="brand" href="index.html">CTF Learning Hub</a>
+  <button class="menu-toggle" type="button" aria-label="เปิดเมนู" aria-expanded="false">☰</button>
   <div class="menu">
     <a href="index.html">หน้าแรก</a>
     <a href="packets-and-frames-th.html">Packets</a>
@@ -392,5 +396,24 @@ footer { text-align:center; padding: 40px 20px; color:#888; border-top: 1px soli
 </footer>
 </div>
 
+<script>
+  const menuToggle = document.querySelector('.menu-toggle');
+  const topNav = document.querySelector('.top-nav');
+  if (menuToggle && topNav) {
+    menuToggle.addEventListener('click', () => {
+      const isOpen = topNav.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.textContent = isOpen ? '×' : '☰';
+    });
+
+    topNav.querySelectorAll('.menu a').forEach((link) => {
+      link.addEventListener('click', () => {
+        topNav.classList.remove('open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        menuToggle.textContent = '☰';
+      });
+    });
+  }
+</script>
 </body>
 </html>

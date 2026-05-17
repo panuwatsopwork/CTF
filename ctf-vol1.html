@@ -70,6 +70,19 @@
     flex-shrink: 0;
   }
   .topbar-inner b { color: var(--accent); font-weight: 600; }
+  .global-menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(94,234,212,.28);
+    background: rgba(94,234,212,.08);
+    color: var(--text);
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
   .global-menu {
     display: flex;
     align-items: center;
@@ -419,24 +432,29 @@
   /* MOBILE */
   @media (max-width: 640px) {
     body { font-size: 15.5px; }
-    .topbar { position: static; }
+    .topbar { position: sticky; top: 0; z-index: 80; }
     .topbar-inner {
       padding: 12px 14px;
-      align-items: stretch;
-      flex-direction: column;
+      align-items: center;
+      flex-wrap: wrap;
       gap: 10px;
     }
+    .topbar-title { flex: 1; }
+    .global-menu-toggle { display: inline-flex; margin-left: auto; }
     .topbar-title span:last-child {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
     .global-menu {
+      display: none;
+      width: 100%;
+      align-items: stretch;
+      flex-direction: column;
       justify-content: flex-start;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      padding-bottom: 2px;
+      padding-top: 8px;
     }
+    .topbar.open .global-menu { display: flex; }
     .hero { padding: 34px 4px 18px; }
     .hero h1 { font-size: clamp(32px, 12vw, 44px); }
     .hero p.lead { font-size: 16px; }
@@ -854,6 +872,7 @@
       <span class="dot"></span>
       <span>Pre Security • <b>CTF Collection Vol 1</b> • TryHackMe Notes</span>
     </div>
+    <button class="global-menu-toggle" type="button" aria-label="เปิดเมนูหลัก" aria-expanded="false">☰</button>
     <nav class="global-menu" aria-label="เมนูหลัก">
       <a href="index.html">หน้าแรก</a>
       <a href="packets-and-frames-th.html">Packets</a>
@@ -3361,6 +3380,24 @@ hydra -l admin -P pins.txt target http-post-form \
   const toggle = document.getElementById('sidebarToggle');
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
+  const globalMenuToggle = document.querySelector('.global-menu-toggle');
+  const topbar = document.querySelector('.topbar');
+
+  if (globalMenuToggle && topbar) {
+    globalMenuToggle.addEventListener('click', () => {
+      const isOpen = topbar.classList.toggle('open');
+      globalMenuToggle.setAttribute('aria-expanded', String(isOpen));
+      globalMenuToggle.textContent = isOpen ? '×' : '☰';
+    });
+
+    topbar.querySelectorAll('.global-menu a').forEach((link) => {
+      link.addEventListener('click', () => {
+        topbar.classList.remove('open');
+        globalMenuToggle.setAttribute('aria-expanded', 'false');
+        globalMenuToggle.textContent = '☰';
+      });
+    });
+  }
 
   function closeSidebar() {
     sidebar.classList.remove('open');
