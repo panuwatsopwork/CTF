@@ -30,6 +30,8 @@
 - `extending-your-network-th.html`
 - `ctf-vol1.html`
 
+ทุกหน้า HTML มี header/menu สำหรับข้ามไฟล์หลักใน workspace แล้ว จึงสามารถกดไปกลับระหว่างบทเรียนและคู่มือ CTF ได้โดยไม่ต้องกลับผ่าน browser back button
+
 ลิงก์แบบ relative path เหมาะกับ GitHub Pages project site ที่เปิดผ่าน `https://panuwatsopwork.github.io/CTF/` เพราะ browser จะ resolve ไฟล์จาก root ของ project site เดียวกัน
 
 ## รายละเอียดไฟล์
@@ -49,6 +51,7 @@
   - กลุ่ม CTF Collection และเตรียมสอบ
   - Note สำหรับ GitHub Pages
 - ข้อสำคัญ: หน้าแรกใช้ relative links ทั้งหมด จึงเหมาะกับ GitHub Pages ที่ใช้ `index.html` เป็น entry point
+- Mobile: เมนูและ card layout ปรับลงจอเล็ก โดยเมนูเลื่อนแนวนอนได้เมื่อพื้นที่ไม่พอ
 
 ### `packets-and-frames-th.html`
 
@@ -70,6 +73,7 @@
 - External dependency:
   - Google Fonts
   - ลิงก์อ้างอิง TryHackMe room
+- Mobile: เพิ่ม header menu ข้ามไฟล์, ลด padding, ปรับหัวข้อ, table และ diagram ให้เลื่อนแนวนอนได้เมื่อจอแคบ
 
 ### `dns-in-detail-th.html`
 
@@ -89,6 +93,7 @@
   - มี table of contents, diagram, table, info box, warn box และ success box
 - External dependency:
   - Google Fonts
+- Mobile: เพิ่ม header menu ข้ามไฟล์, ปรับ task card, table, diagram และ flow step ให้ไม่ล้นจอ
 
 ### `extending-your-network-th.html`
 
@@ -109,6 +114,7 @@
   - มี table of contents, diagram, flow step, table และกล่องคำอธิบาย
 - External dependency:
   - Google Fonts
+- Mobile: เพิ่ม header menu ข้ามไฟล์, ปรับ task card, table, diagram และ flow step ให้ไม่ล้นจอ
 
 ### `ctf-vol1.html`
 
@@ -137,12 +143,14 @@
 - External dependency:
   - Google Fonts
   - ลิงก์เครื่องมือ CTF ภายนอก เช่น CyberChef, dCode, Aperi'Solve และแหล่งฝึกอื่น ๆ
+- Mobile: topbar มีเมนูข้ามไฟล์แบบเลื่อนแนวนอน, sidebar เป็น overlay ผ่านปุ่มลอย, code block/table เลื่อนแนวนอนได้ และ exam/example cards ถูกจัดเรียงเป็นแนวตั้งบนจอเล็ก
 
 ## GitHub Pages Checklist
 
 - มี `index.html` ที่ root ของ repository แล้ว
 - ทุกหน้าเป็น static HTML ไม่ต้องมี build step
 - ลิงก์จากหน้าแรกไปหน้าอื่นใช้ relative path
+- ทุกหน้า HTML มีเมนูข้ามไฟล์ด้วย relative path
 - ไม่มี asset ภายในที่ต้องอัปโหลดเพิ่มนอกจากไฟล์ HTML และ Markdown
 - ควร commit และ push `ctf-vol1.html` เพราะเป็นไฟล์ใหม่ที่ต้องอยู่บน remote ก่อน GitHub Pages จะเปิดได้
 - หลัง push แล้วให้ตรวจ URL หลัก: `https://panuwatsopwork.github.io/CTF/`

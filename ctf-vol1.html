@@ -31,6 +31,7 @@
 
   body {
     margin: 0;
+    overflow-x: hidden;
     background:
       radial-gradient(1200px 600px at 80% -10%, rgba(94,234,212,.08), transparent 60%),
       radial-gradient(900px 500px at -10% 20%, rgba(240,171,252,.07), transparent 60%),
@@ -49,19 +50,49 @@
     position: sticky; top: 0; z-index: 50;
   }
   .topbar-inner {
-    max-width: 1100px; margin: 0 auto;
+    max-width: 1400px; margin: 0 auto;
     padding: 14px 24px;
-    display: flex; align-items: center; gap: 14px;
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 13px; color: var(--muted);
     letter-spacing: .04em;
+  }
+  .topbar-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
   }
   .topbar-inner .dot {
     width: 8px; height: 8px; border-radius: 50%;
     background: var(--accent);
     box-shadow: 0 0 12px var(--accent);
+    flex-shrink: 0;
   }
   .topbar-inner b { color: var(--accent); font-weight: 600; }
+  .global-menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    letter-spacing: 0;
+  }
+  .global-menu a {
+    color: var(--muted);
+    text-decoration: none;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    transition: color .2s ease, background .2s ease, border-color .2s ease;
+    white-space: nowrap;
+  }
+  .global-menu a:hover,
+  .global-menu a.active {
+    color: var(--text);
+    background: rgba(94,234,212,.08);
+    border-color: rgba(94,234,212,.28);
+  }
 
   /* HERO */
   .hero {
@@ -264,6 +295,7 @@
     border-radius: 10px;
     border: 1px solid var(--border);
     overflow-x: auto;
+    max-width: 100%;
     font-size: 13.5px;
     line-height: 1.7;
     margin: 10px 0;
@@ -386,11 +418,45 @@
 
   /* MOBILE */
   @media (max-width: 640px) {
-    .hero { padding: 40px 20px 20px; }
-    .container { padding: 16px; }
-    .panel, .toc, .memory { padding: 18px 16px; }
+    body { font-size: 15.5px; }
+    .topbar { position: static; }
+    .topbar-inner {
+      padding: 12px 14px;
+      align-items: stretch;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .topbar-title span:last-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .global-menu {
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .hero { padding: 34px 4px 18px; }
+    .hero h1 { font-size: clamp(32px, 12vw, 44px); }
+    .hero p.lead { font-size: 16px; }
+    .container { padding: 0; }
+    .panel, .toc, .memory, .summary { padding: 18px 16px; }
+    .task { margin: 42px 0; }
     .task-head { flex-direction: column; gap: 8px; }
-    pre { font-size: 12px; }
+    .steps > li { padding: 48px 14px 14px; }
+    pre { font-size: 12px; padding: 14px; }
+    code, .flag, .answer-format { overflow-wrap: anywhere; }
+    table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+    .tools, .toc-grid { grid-template-columns: 1fr; }
+    .workflow { align-items: stretch; flex-direction: column; }
+    .workflow .node { width: 100%; }
+    .workflow .arrow { transform: rotate(90deg); align-self: center; }
   }
 
   /* ===== SIDEBAR LAYOUT ===== */
@@ -578,7 +644,7 @@
     .sidebar.open { transform: translateX(0); }
     .sidebar.open + .sidebar-overlay { display: block; }
     .sidebar-toggle { display: flex; }
-    .content { padding: 0 16px; }
+    .content { padding: 0 16px; max-width: 100%; }
   }
 
   /* hide old TOC since we now have sidebar */
@@ -747,6 +813,36 @@
   .tools-table { font-size: 13.5px; }
   .tools-table th { font-size: 12px; }
   .tools-table td:first-child { color: var(--accent-3); font-family: 'IBM Plex Mono', monospace; font-weight: 600; white-space: nowrap; }
+  @media (max-width: 640px) {
+    .exam-hero {
+      margin: 48px 0 28px;
+      padding: 28px 18px;
+      border-radius: 14px;
+    }
+    .exam-hero::before {
+      right: 14px;
+      top: 10px;
+      font-size: 64px;
+    }
+    .exam-section { margin: 44px 0; }
+    .exam-section-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+      padding: 18px;
+    }
+    .example {
+      padding: 18px 16px;
+      border-radius: 12px;
+    }
+    .example-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .example-points { white-space: normal; }
+    .way { padding: 14px; }
+  }
 </style>
 </head>
 <body>
@@ -754,8 +850,17 @@
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-inner">
-    <span class="dot"></span>
-    <span>Pre Security • <b>CTF Collection Vol 1</b> • TryHackMe Notes</span>
+    <div class="topbar-title">
+      <span class="dot"></span>
+      <span>Pre Security • <b>CTF Collection Vol 1</b> • TryHackMe Notes</span>
+    </div>
+    <nav class="global-menu" aria-label="เมนูหลัก">
+      <a href="index.html">หน้าแรก</a>
+      <a href="packets-and-frames-th.html">Packets</a>
+      <a href="dns-in-detail-th.html">DNS</a>
+      <a href="extending-your-network-th.html">Extending</a>
+      <a class="active" href="ctf-vol1.html">CTF Vol 1</a>
+    </nav>
   </div>
 </div>
 
