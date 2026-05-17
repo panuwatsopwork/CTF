@@ -432,29 +432,59 @@
   /* MOBILE */
   @media (max-width: 640px) {
     body { font-size: 15.5px; }
-    .topbar { position: sticky; top: 0; z-index: 80; }
-    .topbar-inner {
-      padding: 12px 14px;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
+    .topbar {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 120;
+      border: 0;
+      background: transparent;
+      backdrop-filter: none;
+      pointer-events: none;
     }
-    .topbar-title { flex: 1; }
-    .global-menu-toggle { display: inline-flex; margin-left: auto; }
-    .topbar-title span:last-child {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .topbar-inner {
+      padding: 0;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0;
+    }
+    .topbar-title { display: none; }
+    .global-menu-toggle {
+      display: inline-flex;
+      width: auto;
+      min-width: 46px;
+      height: 46px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: rgba(11,16,32,.86);
+      box-shadow: 0 10px 28px rgba(0,0,0,.32);
+      backdrop-filter: blur(12px);
+      pointer-events: auto;
     }
     .global-menu {
       display: none;
-      width: 100%;
+      position: fixed;
+      top: 66px;
+      right: 12px;
+      width: min(280px, calc(100vw - 24px));
       align-items: stretch;
       flex-direction: column;
       justify-content: flex-start;
-      padding-top: 8px;
+      gap: 6px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(11,16,32,.96);
+      box-shadow: 0 18px 50px rgba(0,0,0,.45);
+      backdrop-filter: blur(14px);
+      pointer-events: auto;
     }
     .topbar.open .global-menu { display: flex; }
+    .global-menu a {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.03);
+    }
     .hero { padding: 34px 4px 18px; }
     .hero h1 { font-size: clamp(32px, 12vw, 44px); }
     .hero p.lead { font-size: 16px; }
@@ -617,14 +647,18 @@
     bottom: 20px;
     right: 20px;
     z-index: 100;
-    width: 52px; height: 52px;
-    border-radius: 50%;
+    min-width: 52px; height: 52px;
+    padding: 0 16px;
+    border-radius: 999px;
     background: var(--accent);
     color: var(--bg);
     border: none;
     box-shadow: 0 4px 20px rgba(94,234,212,.4);
     cursor: pointer;
-    font-size: 22px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Sarabun', system-ui, sans-serif;
+    gap: 8px;
     align-items: center;
     justify-content: center;
   }
@@ -649,15 +683,15 @@
     .sidebar {
       position: fixed;
       top: 0; left: 0;
-      width: 280px;
-      max-width: 85vw;
+      width: 360px;
+      max-width: 92vw;
       height: 100vh;
       z-index: 95;
       transform: translateX(-100%);
       transition: transform .25s ease;
       background: var(--bg);
       border-right: 1px solid var(--border);
-      padding-top: 60px;
+      padding-top: 28px;
     }
     .sidebar.open { transform: translateX(0); }
     .sidebar.open + .sidebar-overlay { display: block; }
@@ -872,7 +906,7 @@
       <span class="dot"></span>
       <span>Pre Security • <b>CTF Collection Vol 1</b> • TryHackMe Notes</span>
     </div>
-    <button class="global-menu-toggle" type="button" aria-label="เปิดเมนูหลัก" aria-expanded="false">☰</button>
+    <button class="global-menu-toggle" type="button" aria-label="เปิดเมนูหลัก" aria-expanded="false">☰ เมนู</button>
     <nav class="global-menu" aria-label="เมนูหลัก">
       <a href="index.html">หน้าแรก</a>
       <a href="packets-and-frames-th.html">Packets</a>
@@ -884,7 +918,7 @@
 </div>
 
 <!-- MOBILE TOGGLE -->
-<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="เปิดสารบัญ" aria-expanded="false">☰ สารบัญ</button>
 
 <div class="layout">
 
@@ -3387,28 +3421,39 @@ hydra -l admin -P pins.txt target http-post-form \
     globalMenuToggle.addEventListener('click', () => {
       const isOpen = topbar.classList.toggle('open');
       globalMenuToggle.setAttribute('aria-expanded', String(isOpen));
-      globalMenuToggle.textContent = isOpen ? '×' : '☰';
+      globalMenuToggle.textContent = isOpen ? '× ปิด' : '☰ เมนู';
     });
 
     topbar.querySelectorAll('.global-menu a').forEach((link) => {
       link.addEventListener('click', () => {
         topbar.classList.remove('open');
         globalMenuToggle.setAttribute('aria-expanded', 'false');
-        globalMenuToggle.textContent = '☰';
+        globalMenuToggle.textContent = '☰ เมนู';
       });
     });
   }
 
   function closeSidebar() {
     sidebar.classList.remove('open');
+    if (toggle) toggle.setAttribute('aria-expanded', 'false');
   }
   function openSidebar() {
     sidebar.classList.add('open');
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    if (topbar && globalMenuToggle) {
+      topbar.classList.remove('open');
+      globalMenuToggle.setAttribute('aria-expanded', 'false');
+      globalMenuToggle.textContent = '☰ เมนู';
+    }
   }
 
   if (toggle) {
     toggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
+      if (sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
     });
   }
   if (overlay) {
